@@ -1,0 +1,104 @@
+{% extends "dashLayout.html" %}
+{% load static %}
+{% block list-group %}
+<a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-chart-pie mr-3"></i>Kontrol Paneli</a>
+<a href="{% url 'newRecord' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-plus mr-3"></i>Hata Tanımla</a>
+<a href="{% url 'records' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-table mr-3"></i>Kayıtlar</a>
+<a href="{% url 'users' %}" class="list-group-item active waves-effect mb-2 b-orange rounded">
+    <i class="fas fa-user mr-3"></i>Kullanıcılar
+</a>
+<a href="{% url 'errors' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-exclamation-circle mr-3"></i></i>Hatalar</a>
+<a href="{% url 'qualities' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-certificate mr-3"></i>Kaliteler</a>
+<a href="{% url 'reports' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-file-alt mr-3"></i>Raporlar</a>
+{% endblock list-group %}
+
+{% block title %}
+<a href="{% url 'users' %}" class="c-orange">Tüm Kullanıcılar</a>
+<span>/</span>
+<span>Genel Bakış</span>
+{% endblock title %}
+
+{% block content %}
+<div class="mb-1 border p-3 bxsh text-center b-grey">
+<table id="table_id" class="display">
+    <thead class="black white-text">
+        <tr>
+            <td>#</td>
+            <td>Son Görülme Zamanı</td>
+            <td>İsim</td>
+            <td>Soyisim</td>
+            <td>Kullanıcı Adı</td>
+            <td>E-Posta Adresi</td>
+            <td>Rol</td>
+            <td>Kayıt Sayısı</td>
+        </tr>
+        <tr>
+            <th>#</th>
+            <th>Son Görülme Zamanı</th>
+            <th>İsim</th>
+            <th>Soyisim</th>
+            <th>Kullanıcı Adı</th>
+            <th>E-Posta Adresi</th>
+            <th>Rol</th>
+            <th>Kayıt Sayısı</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{user.us_id}}</td>
+            <td>{{user.us_lastseen}}</td>
+            <td>{{user.us_fname}}</td>
+            <td>{{user.us_lname}}</td>
+            <td>{{user.us_name}}</td>
+            <td>{{user.us_email}}</td>
+            <td>{{user.us_role}}</td>
+            <td>{% for rc in recordCount %}
+            {% if user.us_id == rc.re_labeledby %}
+            {{rc.total}}
+            {% endif %}
+            {% endfor %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5',
+                'pdfHtml5',
+            ]
+        });
+        $('#table_id thead th').each(function () {
+            var title = $(this).text();
+            $(this).html('<input class="each-search" type="text" placeholder="' + title + '" />');
+        });
+
+        var table = $('#table_id').DataTable();
+
+        table.columns().every(function () {
+            var that = this;
+
+            $('input', this.header()).on('keyup change clear', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+        $('.each-search').addClass("form-control p-0");
+        $('#table_id_length label select').addClass("browser-default custom-select custom-select-sm");
+        $('#table_id_filter').addClass("d-none");
+    });
+</script>
+{% endblock content %}

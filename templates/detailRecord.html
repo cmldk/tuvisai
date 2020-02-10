@@ -1,0 +1,94 @@
+{% extends "dashLayout.html" %}
+{% load static %}
+{% block list-group %}
+{% load crispy_forms_tags %}
+<a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-chart-pie mr-3"></i>Kontrol Paneli</a>
+<a href="{% url 'newRecord' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-plus mr-3"></i>Hata Tanımla</a>
+<a href="{% url 'records'%}" class="list-group-item active waves-effect mb-2 b-orange rounded">
+    <i class="fas fa-table mr-3"></i>Kayıtlar
+</a>
+<a href="{% url 'users'%}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-user mr-3"></i>Kullanıcılar</a>
+<a href="{% url 'errors'%}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-exclamation-circle mr-3"></i></i>Hatalar</a>
+<a href="{% url 'qualities'%}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-certificate mr-3"></i>Kaliteler</a>
+<a href="{% url 'reports' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-file-alt mr-3"></i>Raporlar</a>
+{% endblock list-group %}
+
+{% block title %}
+<a href="{% url 'records' %}" class="c-orange">Tüm Kayıtlar</a>
+<span>/</span>
+<span>Kayıt Detay</span>
+{% endblock title %}
+
+{% block content %}
+<main>
+    <section>
+        <div class="mt-3 mb-3 tvs-border rounded">
+            <div>
+                <div class="col-md-12 border border-light p-5 rounded text-center"
+                    style="box-shadow: 0.1px 0.11px 20px rgb(216, 216, 216)!important;">
+                    <div class="img-zoom-container">
+                        <div class="row container justify-content-center mb-3 p-0 mx-auto">
+                            <div class="col-lg-8 col-12">
+                                <img id="myimage" class="rounded" src="{{MEDIA_URL}}{{record.re_image}}" style="width: 100%" >
+                            </div>
+                            <div id="myresult" class="img-zoom-result rounded"></div>
+                        </div>
+                        <div class="container col-lg-6 col-12">
+                            <form method="post" name="myfile">
+                                {% csrf_token %}
+                                {{form|crispy}}
+                                <div>
+                                    <label>Kalite Kodu</label>
+                                    <div>
+                                        <input type="text" placeholder="{{record.re_qualityid.qu_code}}" readonly class="form-control mb-3 ">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label>Hata Kodu</label>
+                                    <div>
+                                        <input type="text" placeholder="{{record.re_errorid.er_code}}" readonly class="form-control mb-3 ">
+                                    </div>
+                                </div>
+                                <a class="btn btn-success" href="{% url 'editRecord' record.re_id %}">Düzenle</a>
+                                <a class="btn btn-danger" href="{% url 'records'%}">İptal</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<script>
+    $(document).ready(function () {
+        $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5',
+                'pdfHtml5',
+            ],
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#id_re_fabrictype').addClass("form-control form-control-sm mb-3");
+        $('#id_re_fabrictype').attr('readonly',true);
+        $('#id_re_path').addClass("form-control form-control-sm mb-3");
+        $('#id_re_path').attr('readonly', true);
+        $('#id_re_qualityid').addClass("browser-default custom-select custom-select-sm mb-3");
+        $('#id_re_qualityid').attr('disabled',true);
+        $('#id_re_errorid').addClass("browser-default custom-select custom-select-sm mb-3 disabled");
+        $('#id_re_errorid').attr('disabled',true);
+    });
+</script>
+<script>
+    imageZoom("myimage", "myresult");
+</script>
+{% endblock content %}

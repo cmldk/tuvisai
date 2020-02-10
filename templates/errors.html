@@ -1,0 +1,109 @@
+{% extends "dashLayout.html" %}
+{% load static %}
+{% block list-group %}
+<a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-chart-pie mr-3"></i>Kontrol Paneli</a>
+<a href="{% url 'errorRecord' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-plus mr-3"></i>Hata Tanımla</a>
+<a href="{% url 'records' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-table mr-3"></i>Kayıtlar</a>
+<a href="{% url 'users' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-user mr-3"></i></i>Kullanıcılar</a>
+<a href="{% url 'errors' %}" class="list-group-item active waves-effect mb-2 b-orange rounded">
+    <i class="fas fa-exclamation-circle mr-3"></i>Hatalar
+</a>
+<a href="{% url 'qualities' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-certificate mr-3"></i>Kaliteler</a>
+<a href="{% url 'reports' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-file-alt mr-3"></i>Raporlar</a>
+{% endblock list-group %}
+
+{% block title %}
+<a href="{% url 'errors' %}" class="c-orange">Tüm Hatalar</a>
+<span>/</span>
+<span>Genel Bakış</span>
+{% endblock title %}
+
+{% block content %}
+<div class="mt-3 mb-3">
+    <div>
+        <div class="col-md-12 p-2 text-center">
+            <a href="{% url 'newError' %}"><button class="btn button-blue">Yeni Hata</button></a>
+        </div>
+    </div>
+</div>
+<div class="mb-1 border p-3 bxsh text-center b-grey">
+<table id="table_id" class="display fs-records">
+    <thead class="black white-text">
+        <tr>
+            <td>#</td>
+            <td>Oluşturma Zamanı</td>
+            <td>Hata Kodu</td>
+            <td>Hata Adı</td>
+            <td>Kayıt Sayısı</td>
+            <td>İşlemler</td>
+        </tr>
+        <tr>
+            <th><input class="each-search" type="text" placeholder="   " /></th>
+            <th><input class="each-search" type="text" placeholder="Oluşturma Zamanı" /></th>
+            <th><input class="each-search" type="text" placeholder="Hata Kodu" /></th>
+            <th><input class="each-search" type="text" placeholder="Hata Adı" /></th>
+            <th><input class="each-search" type="text" placeholder="Kayıt Sayısı" /></th>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for error in errors %}
+        <tr>
+            <td>{{error.er_id}}</td>
+            <td>{{error.er_createdat}}</td>
+            <td>{{error.er_code}}</td>
+            <td>{{error.er_name}}</td>
+            <td>{% for rc in recordCount %}
+            {% if error.er_id == rc.re_errorid %}
+            {{rc.total}}
+            {% endif %}
+            {% endfor %}</td>
+            <td>
+                <div class="row justify-content-center">
+                    <a href="{% url 'editError' error.er_id %}"><button class="btn-edit">Düzenle</button></a>
+                    <a href="{% url 'deleteError' error.er_id %}" class="confirmation"><button class="btn-delete">Sil</button></a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5',
+                'pdfHtml5',
+            ],
+        });
+        var table = $('#table_id').DataTable();
+
+        table.columns().every(function () {
+            var that = this;
+            $('input', this.header()).on('keyup change clear', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+        $('.each-search').addClass("form-control p-0");
+        $('#table_id_length label select').addClass("browser-default custom-select custom-select-sm");
+        $('#table_id_filter').addClass("d-none");
+    });
+</script>
+<script>
+    $('.confirmation').on('click', function () {
+        return confirm('Emin misiniz?');
+    });
+</script>
+{% endblock content %}

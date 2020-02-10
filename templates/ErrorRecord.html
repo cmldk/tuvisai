@@ -1,0 +1,68 @@
+{% extends "dashLayout.html" %}
+{% load static %}
+{% block list-group %}
+<a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-chart-pie mr-3"></i>Kontrol Paneli</a>
+<a href="{% url 'newRecord' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-plus mr-3"></i>Hata Tanımla</a>
+<a href="{% url 'records' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-table mr-3"></i>Kayıtlar</a>
+<a href="{% url 'users' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-user mr-3"></i></i>Kullanıcılar</a>
+<a href="{% url 'errors' %}" class="list-group-item active waves-effect mb-2 b-orange rounded">
+    <i class="fas fa-exclamation-circle mr-3"></i>Hatalar
+</a>
+<a href="{% url 'qualities' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-certificate mr-3"></i>Kaliteler</a>
+<a href="{% url 'reports' %}" class="list-group-item list-group-item-action waves-effect mb-2 b-tvs rounded">
+    <i class="fas fa-file-alt mr-3"></i>Raporlar</a>
+{% endblock list-group %}
+
+{% block title %}
+<a href="{% url 'errors' %}" class="c-orange">Tüm Hatalar</a>
+<span>/</span>
+<span>Genel Bakış</span>
+{% endblock title %}
+
+{% block content %}
+<div class="col-lg-12 mx-auto">
+    <img src="{% url 'streaming' %}" alt="">
+    <button id="take" class="btn btn-success">Resim</button>
+    <button id="kapat" class="btn btn-danger">Kapat</button>
+</div>
+<script>
+    $(document).ready(function () {
+        var endpoint = '/api/data/2'
+        $("#kapat").click(function () {
+            var value = "kapat"
+            $.ajax({
+                data: {
+                    'value': value,
+                },
+                url: endpoint,
+                success: function () {
+                    console.log("closed")
+                },
+                error: function (error_data) {
+                    console.log(error_data)
+                }
+            });
+        });
+        $("#take").click(function () {
+            var value = "take"
+            $.ajax({
+                data: {
+                    'value': value,
+                },
+                url: endpoint,
+                success: function () {
+                    console.log("Taken")
+                },
+                error: function (error_data) {
+                    console.log(error_data)
+                }
+            });
+        });
+    });
+</script>
+{% endblock content %}

@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block body %}
+{% load crispy_forms_tags %}
+<main>
+    <section>
+        <div class="container text-center mt-4">
+            <div class="mb-3 p-1 logo-border-div">
+                <img class="tuvis-logo-login" src="{{MEDIA_URL}}logo.png" alt="Tuvis">
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-10 mx-auto offset-md-3 border border-light p-5 rounded text-center b-blue c-white"
+                    style="box-shadow: 0.1px 0.11px 20px rgb(216, 216, 216)!important;">
+                    <h3 class="mb-3">Hoşgeldiniz</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{form|crispy}}
+                        <br>
+                        <button type="submit" class="btn btn-primary w-100 button-orange m-0 mb-2">Giriş Yap</button>
+                    </form>
+                    <a href="{% url 'register' %}"><button class="btn btn-primary w-100 m-0">Kayıt
+                            Ol</button></a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock body %}
